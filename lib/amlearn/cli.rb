@@ -13,15 +13,17 @@ module Amlearn
 
     include Thor::Actions
 
-    option :config, aliases: '-c', type: :string, default: "#{ENV['HOME']}/.aml/config.yml", desc: 'config'
-    option :profile, aliases: '-p', type: :string, default: 'default', desc: 'profile'
-    option :region, aliases: '-p', type: :string, default: ENV['AWS_DEFAULT_REGION'] || AWS_DEFAULT_REGION, desc: 'region'
+    option :config, aliases: '-c', type: :string, desc: 'config'
+    option :profile, aliases: '-p', type: :string, desc: 'profile'
+    option :region, aliases: '-r', type: :string, default: ENV['AWS_DEFAULT_REGION'] || AWS_DEFAULT_REGION, desc: 'region'
     def initialize(args = [], options = {}, config = {})
       super(args, options, config)
       @class_options = config[:shell].base.options
       @client = Aws::MachineLearning::Client.new(region: @class_options[:region])
       @s3 = Aws::S3::Client.new(region: @class_options[:region])
-      @config = YAML.load(ERB.new(File.read(@class_options[:config])).result)[@class_options[:profile]]
+      if @class_options[:config] && File.exist?(@class_options[:config])
+        @config = YAML.load(ERB.new(File.read(@class_options[:config])).result)[@class_options[:profile]]
+      end
       @logger = Logger.new(STDOUT)
     end
 
@@ -72,7 +74,7 @@ module Amlearn
       end
     end
 
-    desc "create_data_source_from_s3", "create_data_source_from_s3"
+    desc "run_all", "run_all"
     option :name_suffix, type: :string, desc: 'batch_prediction_data_source_id'
     option :create_ml_model, type: :boolean, default: false, desc: 'create_ml_model'
     option :create_batch_prediction, type: :boolean, default: false, desc: 'create_ml_model'
@@ -120,7 +122,7 @@ module Amlearn
       end
     end
 
-    desc "create_ml_model --data_source_name [data_source_name]", "create_ml_model"
+    desc "create_data_source_from_s3", "create_data_source_from_s3"
     option :data_source_name, type: :string, desc: 'data_source_name'
     option :data_source_type, type: :string, required: true, desc: 'data_source_type', enum: ['data_source', 'prediction_data_source']
     def create_data_source_from_s3
@@ -190,7 +192,7 @@ module Amlearn
       resp
     end
 
-    desc "create_data_source_from_s3", "create_data_source_from_s3"
+    desc "update_data_source", "update_data_source"
     option :data_source_id, aliases: '-d', type: :string, default: 'data_source.csv', desc: 'data_file_name'
     option :data_source_name, aliases: '-d', type: :string, default: 'data_source.csv', desc: 'data_file_name'
     def update_data_source
@@ -201,7 +203,7 @@ module Amlearn
       resp = @client.update_data_source(params)
     end
 
-    desc "create_data_source_from_s3", "create_data_source_from_s3"
+    desc "create_realtime_endpoint", "create_realtime_endpoint"
     option :ml_model_id, type: :string, required: true, desc: 'ml_model_id'
     def create_realtime_endpoint
       resp = @client.create_realtime_endpoint({
