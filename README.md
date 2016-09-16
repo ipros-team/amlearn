@@ -6,6 +6,14 @@ Amazon Machine Learning opeartion very simply.
 
     $ amlearn run_all -p aml-test --create_ml_model --create_batch_prediction -c config/aml.yml
 
+## Setting
+
+```
+export AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXXXXXXX
+export AWS_SECRET_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+export AWS_DEFAULT_REGION=us-east-1
+```
+
 ## Setting(aml.yml)
 ```
 aml-test:
