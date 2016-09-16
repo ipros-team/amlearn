@@ -15,11 +15,12 @@ module Amlearn
 
     option :config, aliases: '-c', type: :string, default: "#{ENV['HOME']}/.aml/config.yml", desc: 'config'
     option :profile, aliases: '-p', type: :string, default: 'default', desc: 'profile'
+    option :region, aliases: '-p', type: :string, default: ENV['AWS_DEFAULT_REGION'] || AWS_DEFAULT_REGION, desc: 'region'
     def initialize(args = [], options = {}, config = {})
       super(args, options, config)
       @class_options = config[:shell].base.options
-      @client = Aws::MachineLearning::Client.new(region: AWS_DEFAULT_REGION)
-      @s3 = Aws::S3::Client.new(region: AWS_DEFAULT_REGION)
+      @client = Aws::MachineLearning::Client.new(region: @class_options[:region])
+      @s3 = Aws::S3::Client.new(region: @class_options[:region])
       @config = YAML.load(ERB.new(File.read(@class_options[:config])).result)[@class_options[:profile]]
       @logger = Logger.new(STDOUT)
     end
