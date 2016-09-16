@@ -17,9 +17,11 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ['lib']
 
-  gem.add_dependency 'thor', '~> 0.19.1'
+  gem.add_dependency 'thor'
+  gem.add_dependency 'aws-sdk', '~> 2'
+  gem.add_dependency 'uuidtools'
 
-  gem.add_development_dependency 'bundler', '~> 1.7.2'
+  gem.add_development_dependency 'bundler'
   gem.add_development_dependency 'pry', '~> 0.10.1'
   gem.add_development_dependency 'rake', '~> 10.3.2'
   gem.add_development_dependency 'rspec', '~> 3.0'
