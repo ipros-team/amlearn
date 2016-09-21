@@ -21,7 +21,7 @@ module Amlearn
       @class_options = config[:shell].base.options
       @client = Aws::MachineLearning::Client.new(region: @class_options[:region])
       @s3 = Aws::S3::Client.new(region: @class_options[:region])
-      if @class_options[:config] && File.exist?(@class_options[:config])
+      if @class_options[:config]
         @config = YAML.load(ERB.new(File.read(@class_options[:config])).result)[@class_options[:profile]]
       end
       @logger = Logger.new(STDOUT)
