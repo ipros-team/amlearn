@@ -139,7 +139,7 @@ module Amlearn
       option = {
         ml_model_id: SecureRandom.hex(8),
         ml_model_name: ml_model_name,
-        ml_model_type: @core.get_ml_model_type,
+        ml_model_type: get_ml_model_type,
         parameters: @config['ml_model_parameters'],
         training_data_source_id: training_data_source.data_source_id
       }
@@ -180,13 +180,15 @@ module Amlearn
       ml_model = search(:describe_ml_models, options[:ml_model_name]).first
       batch_prediction_data_source = search(:describe_data_sources, options[:batch_prediction_data_source_name]).first
 
-      resp = @client.create_batch_prediction({
+      params = {
         batch_prediction_id: SecureRandom.hex(8),
         batch_prediction_name: batch_prediction_name,
         ml_model_id: ml_model.ml_model_id,
         batch_prediction_data_source_id: batch_prediction_data_source.data_source_id,
         output_uri: "s3://#{@config['bucket']}/#{@class_options[:profile]}"
-      })
+      }
+
+      resp = @client.create_batch_prediction(params)
       wait_from_name(batch_prediction_name, :describe_batch_predictions)
       puts resp.to_h.to_json
       resp
